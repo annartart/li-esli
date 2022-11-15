@@ -1,0 +1,382 @@
+---
+title: "Li_esli_analysis"
+author: "Anna Artemova"
+date: "28 January 2020"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+## Data preprocessing
+
+```{r, message=FALSE, warning=FALSE}
+# find and list all the files starting with "L".
+# Maybe add full regualar expr for the files
+
+filenames = list.files(pattern="^[L]")
+
+myfiles = lapply(filenames, read_csv)
+
+# add a variable for filename 
+myfiles <- Map(cbind, myfiles, from = filenames)
+
+for (i in 1:length(myfiles)) {
+  myfiles[[i]]$word_count <- as.numeric(myfiles[[i]]$word_count)
+}
+
+library(stringr)
+
+# an empty object for the loop
+data <- list()
+
+# first, create the list variable in each list,
+# then take all list to merge them in one
+
+# subject_nr! in 27 need to change to 27
+# subject_nr! in 38 need to change to 38
+
+for (i in 1:length(filenames)) {
+  myfiles[[i]]$subj_id <- str_sub(filenames[i], 1, 5)
+  myfiles[[i]]$subject_nr <- str_sub(filenames[i], 2, 3)
+  
+  data <- bind_rows(data, myfiles[i])
+}
+
+# create a dataset
+data <- data %>%
+  select(subj_id,
+         subject_nr,
+         avg_rt,
+         coding,
+         condition,
+         conditon,
+         count_exp_sequence,
+         main_asp,
+         main_num,
+         main_tense,
+         num,
+         response,
+         response_time,
+         response_time_next,
+         sentence_rus,
+         sub_asp,
+         sub_num,
+         sub_tense,
+         sub_wo,
+         subject_parity,
+         time_exp_sequence,
+         time_next,
+         time_pause,
+         time_response_1,
+         word_count,
+         from) 
+
+# there was a typo in the randomization table, that's why we have condition and
+# conditon as variables in the dataset
+
+data %>%
+  mutate(condition = ifelse(is.na(conditon) == T, condition, conditon)) %>% 
+  select(-conditon) %>% 
+  mutate(word_count = ifelse(num == 42, 6, word_count)) -> data
+
+# data is clean
+```
+
+```{r}
+# read file with demografic data
+
+demogr <- read.csv('demographics.csv',sep = ';' ) %>% 
+  mutate(subj_id = as.factor(subj_id))
+
+working_data <- data %>% mutate(subj_id = as.factor(subj_id)) %>% 
+  full_join(demogr, by = 'subj_id') %>% filter(exclude == "no", english == 1) %>% 
+  mutate(heritageness = droplevels(heritageness))%>% 
+  mutate(
+    subj_id = as.factor(subj_id),
+    subject_nr = as.factor(subject_nr),
+    coding = as.factor(coding),
+    condition = as.factor(condition),
+    main_asp = as.factor(main_asp),
+    main_num = as.factor(main_num),
+    main_tense = as.factor(main_tense),
+    response = as.character(response),
+    sub_asp = as.factor(sub_asp),
+    sub_num = as.factor(sub_num),
+    sub_tense = as.factor(sub_tense),
+    sub_wo = as.factor(sub_wo),
+    from = as.factor(from)
+  ) %>% 
+  filter(coding != c("10distr", "2li", "2distr", #the training trials
+                     "12esli", "12li"))
+
+# descriptive stats
+
+demogr %>%
+  filter(exclude == "no", english == 1) %>% 
+  mutate(female = case_when(gender == "male" ~ 0,
+                            gender == "female" ~ 1))%>%
+  group_by(heritageness, age_group) %>%
+  summarise(count_n = n(),
+            mean_age=mean(age, na.rm = T),
+            max_age=max(age, na.rm = T),
+            min_age=min(age, na.rm = T),
+            sd_age = sd(age, na.rm = T),
+            female = sum(female, na.rm = T),
+            mean_edu=mean(edu_years, na.rm = T),
+            english = sum(english, na.rm = T),
+            french = sum(french, na.rm = T),
+            ukranian = sum(ukranian, na.rm = T),
+            chinese = sum(chinese, na.rm = T),
+            italian = sum(italian, na.rm = T),
+            japanese = sum(japanese, na.rm = T),
+            spanish = sum(spanish, na.rm = T),
+            hebrew = sum(hebrew, na.rm = T),
+            german = sum(german, na.rm = T),
+            georgian = sum(georgian, na.rm = T)) -> demogr_summary
+
+demogr_summary %>% select(heritageness, age_group, count_n, mean_age, min_age, max_age, female, mean_edu)
+
+demogr_summary %>% select(heritageness, age_group, count_n, english, french, ukranian, chinese, italian, japanese, spanish, hebrew, german, georgian)
+
+demogr %>% 
+  filter(exclude == "no") %>% 
+  filter(heritageness == "yes") %>%
+  select(heritageness, age_group, Immigr_data_the_USA) %>% 
+  mutate(Immigr_data_the_USA = as.numeric(as.character(Immigr_data_the_USA)),
+         years_inUSA = 2019 - Immigr_data_the_USA) %>% 
+  group_by(heritageness, age_group) %>% 
+  summarise(count_n = n(),
+            mean_y_InUSA = mean(years_inUSA),
+            min_y_InUSA = min(years_inUSA),
+            max_y_InUSA = max(years_inUSA))
+```
+
+## Analysis
+
+#### We will first check the data without droping the observations by RTs 
+
+### Visualisation
+```{r visualisation without cutting}
+# !!! We threat the ordinal vsriable (response) as numeric for the sake of visualisation. Need to think of a proper way
+
+facet_labels <- c(
+                  `distr` = "Control",
+                  `esli` = "Esli",
+                  `li` = "Li"
+                    )
+
+working_data %>% group_by(subj_id, condition, age_group, heritageness) %>% 
+  summarise(mean_subj = mean(as.numeric(response))) %>% 
+  group_by(condition, age_group, heritageness) %>% 
+  summarise(mean_resp = mean(mean_subj), sd_resp = sd(mean_subj), se_resp = sd_resp/sqrt(n())) %>% 
+  ggplot(aes(heritageness, mean_resp, fill = age_group))+
+  geom_bar(stat = "identity", position=position_dodge())+
+  geom_errorbar(aes(ymin = mean_resp - 2*se_resp,
+                    ymax = mean_resp + 2*se_resp), width = 0.1, position=position_dodge(0.9))+
+  geom_text(aes(label=round(mean_resp,2)), vjust=3, color="white",
+            position = position_dodge(0.9), size=5, fontface = "bold" )+
+#  scale_y_continuous(breaks = seq(0,1,0.05))+
+  ggtitle("Mean responses by heritageness, age group and sentence condition")+
+  facet_grid(.~condition, labeller = as_labeller(facet_labels))+
+  theme_minimal()+
+  scale_fill_discrete(labels = c("Older", "Younger"))+
+  scale_x_discrete(labels = c("No", "Yes"))+
+  theme(axis.text.x = element_text(size = 14),
+        axis.text.y = element_text(size = 14),  
+        axis.title.x = element_text(size = 14, face = "bold"),
+        axis.title.y = element_text(size = 14, face = "bold"),
+        strip.text.x = element_text(size = 14),
+        legend.title = element_text(size = 14, face = "bold"),
+        legend.text = element_text(size = 14)
+        ) +
+  labs(x = "Heritageness", y = "Mean response", fill = "Age group")
+
+```
+
+
+### Ordinal regression
+
+```{r analysis}
+# check the response variable
+working_data$response[1:10]
+
+#now it is a factor variable, and we need an ordinal one
+
+
+working_data$response_ordered <- ordered(working_data$response, levels = 1:5,
+                              labels = c('absolutely_unacceptable',
+                                         'mostly_unacceptable',
+                                         'indefinite',
+                                         'mostly_acceptable',
+                                         'absolutely_acceptable'))
+
+
+working_data$response_ordered[1:10]
+
+
+
+test_data <- working_data %>% select(response_ordered,
+                                     condition,
+                                     age_group,
+                                     subj_id,
+                                     coding,
+                                     heritageness) %>% arrange(subj_id)
+
+
+
+# I first tried this packade but it took ages to compute
+#install.packages("mixor")
+#library(mixor)
+#fit <- mixor(response ~ condition+age_group*heritageness,
+#             data = test_data,
+#             id = subj_id,
+#             link = "logit")
+#summary(fit)
+
+
+
+
+#install.packages("ordinal")
+library(ordinal)
+
+mod <-  clmm(response_ordered~condition*age_group*heritageness+(1|subj_id)+(1|coding), data=test_data,
+             Hess=T
+)
+
+
+summary(mod)
+
+```
+
+#### Now we will try to cut off the responses with RTs which more then 20% bigger then median (within each participant) 
+
+```{r rt check}
+# This is some trials to take into account the rt data
+
+data_adjust_rt <- working_data %>%
+  group_by(subj_id) %>% 
+  mutate(reference = median(response_time)*1.2) %>% 
+  filter(response_time<=reference)
+
+data_adjust_rt %>% group_by(subj_id, condition, age_group, heritageness) %>% 
+  summarise(mean_subj = mean(as.numeric(response))) %>% 
+  group_by(condition, age_group, heritageness) %>% 
+  summarise(mean_resp = mean(mean_subj), sd_resp = sd(mean_subj), se_resp = sd_resp/sqrt(n())) %>% 
+  ggplot(aes(heritageness, mean_resp, fill = age_group))+
+  geom_bar(stat = "identity", position=position_dodge())+
+  geom_errorbar(aes(ymin = mean_resp - 2*se_resp,
+                    ymax = mean_resp + 2*se_resp), width = 0.1, position=position_dodge(0.9))+
+  geom_text(aes(label=round(mean_resp,2)), vjust=3, color="white",
+            position = position_dodge(0.9), size=5, fontface = "bold" )+
+#  scale_y_continuous(breaks = seq(0,1,0.05))+
+  ggtitle("Mean responses by heritageness, age group and sentence condition (RT corrected data)")+
+  facet_grid(.~condition, labeller = as_labeller(facet_labels))+
+  theme_minimal()+
+  scale_fill_discrete(labels = c("Older", "Younger"))+
+  scale_x_discrete(labels = c("No", "Yes"))+
+  theme(axis.text.x = element_text(size = 14),
+        axis.text.y = element_text(size = 14),  
+        axis.title.x = element_text(size = 14, face = "bold"),
+        axis.title.y = element_text(size = 14, face = "bold"),
+        strip.text.x = element_text(size = 14),
+        legend.title = element_text(size = 14, face = "bold"),
+        legend.text = element_text(size = 14)
+        ) +
+  labs(x = "Heritageness", y = "Mean response", fill = "Age group")
+
+```
+
+
+```{r analysis with rt}
+# check the response variable
+data_adjust_rt$response[1:10]
+
+#now it is a factor variable, and we need an ordinal one
+
+
+data_adjust_rt$response_ordered <- ordered(data_adjust_rt$response, levels = 1:5,
+                              labels = c('absolutely_unacceptable',
+                                         'mostly_unacceptable',
+                                         'indefinite',
+                                         'mostly_acceptable',
+                                         'absolutely_acceptable'))
+
+
+data_adjust_rt$response_ordered[1:10]
+
+
+
+test_data <- data_adjust_rt %>% select(response_ordered,
+                                     condition,
+                                     age_group,
+                                     subj_id,
+                                     coding,
+                                     heritageness) %>%
+  arrange(subj_id)
+
+mod_rt <-  clmm(response_ordered~condition*age_group*heritageness+
+                  (1|subj_id)+
+                  (1|coding), data=test_data,
+             Hess=T 
+)
+
+
+summary(mod_rt)
+
+summary_mod <- summary(mod_rt)
+```
+
+```{r, warning=FALSE}
+data_summary <- data_adjust_rt %>% mutate(response=as.factor(response)) %>% 
+  group_by(subj_id, condition, age_group, heritageness) %>%
+  mutate(all = n()) %>%
+  group_by(subj_id, condition, age_group, heritageness, response, all) %>%
+  summarise(quant = n()) %>% 
+  mutate(prop = quant/all) %>% 
+  ungroup() %>% 
+  group_by(condition, age_group, heritageness, response) %>%
+  summarise(mean_prop = mean(prop), sd_prop = sd(prop), se_prop = sd_prop/sqrt(n()))
+
+data_summary
+```
+
+```{r}
+
+facet_labels <- c(
+  `distr` = "Control",
+  `esli` = "Esli",
+  `li` = "Li",
+  `yes` = "Heritage",
+  `no` = "Non-heritage"
+)
+
+data_summary %>% 
+  ggplot(aes(response, mean_prop, fill = age_group))+
+  geom_bar(stat = "identity", position=position_dodge(0.9, preserve = "single"))+
+  geom_errorbar(aes(ymin = mean_prop - 2*se_prop,
+                    ymax = mean_prop + 2*se_prop), width = 0.13,
+                position=position_dodge(0.9, preserve = "single"), color = "black")+
+  facet_grid(heritageness~condition, labeller = as_labeller(facet_labels)) +
+  geom_text(aes(label=round(mean_prop,2)), vjust=1, color="white",
+            position = position_dodge(width = 0.9), size=2, fontface = "bold")+
+  ggtitle("Mean response proprtions by heritageness, age group and sentence condition")+
+  theme_minimal()+
+  theme(axis.text.x = element_text(size = 12),
+        axis.text.y = element_text(size = 12),  
+        axis.title.x = element_text(size = 12, face = "bold"),
+        axis.title.y = element_text(size = 12, face = "bold"),
+        strip.text.x = element_text(size = 12),
+        strip.text.y = element_text(size = 12),
+        legend.title = element_text(size = 12),
+        legend.text = element_text(size = 12),
+        plot.title = element_text(size = 12)) +
+  labs(x = "Response", y = "Mean proportion", fill = "Age group")+
+  scale_fill_brewer(labels = c("Older", "Younger"), palette = "Paired")
+
+```

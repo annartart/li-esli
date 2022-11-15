@@ -1,0 +1,45 @@
+subj_num;subj_id;heritageness;age_group;Instructor;Testing_date;consent_form(yes/no);questionnaire(yes/no);age;gender;languages_number(incl rus);english;french;ukranian;chinese;italian;japanese;spanish;hebrew;german;georgian;edu_years;edu_level;Immigr_data_the_USA;other_immigr;exclude
+2;L02HO;yes;old;D;06.12.2019;yes;yes;53;female;1;0;0;0;0;0;0;0;0;0;0;;med_college;;;yes
+1;L01HO;yes;old;D;06.12.2019;yes;yes;53;male;3;1;1;0;0;0;0;0;0;0;0;17;PhD;2000;not_appplicable;no
+3;L03NO;no;old;A;07.12.2019;yes;yes;47;male;2;1;0;0;0;0;0;0;0;0;0;15;speciality;not_appplicable;not_appplicable;no
+4;L04NO;no;old;A;07.12.2019;yes;yes;45;female;4;1;1;0;0;1;0;0;0;0;0;17;speciality;not_appplicable;not_appplicable;no
+5;L05NY;no;young;D;08.12.2019;yes;yes;18;female;2;1;0;0;0;0;0;0;0;0;0;14;BA_student;not_applicable;not_appplicable;yes
+6;L06NY;no;young;D;08.12.2019;yes;yes;18;female;2;1;0;0;0;0;0;0;0;0;0;11;BA_student;not_applicable;not_applicable;no
+7;L07HO;yes;old;D;08.12.2019;yes;yes;48;male;3;1;0;1;0;0;0;0;0;0;0;17;PhD;1995;not_applicable;no
+8;L08HO;yes;old;D;08.12.2019;yes;yes;40;male;5;1;1;0;0;1;0;1;0;0;0;17;PhD;1981;not_applicable;yes
+9;L09HO;yes;old;D;08.12.2019;yes;yes;44;female;2;1;0;0;0;0;0;0;0;0;0;22;PhD;2001;;no
+10;L10HO;yes;old;D;08.12.2019;yes;yes;52;male;2;1;0;0;0;0;0;0;0;0;0;18;PhD;1992;;no
+11;L11HO;yes;old;D;08.12.2019;yes;yes;54;female;2;1;0;0;0;0;0;0;0;0;0;16;PhD;1992;;no
+12;L12HY;yes but italian;young;S;09.12.2019;yes;;;;;;;;;;;;;;;;;;;yes
+13;L13HY;yes;young;D;11.12.2019;yes;yes;29;male;1;1;0;0;0;0;0;0;0;0;0;13;MA;2015;Finland, 1 year, 2014;no
+14;L14HO;yes;old;D;11.12.2019;yes;yes;43;male;3;1;0;0;0;0;0;0;0;1;0;17;PhD;1998;not_applicable;no
+15;L15HO;yes;old;D;11.12.2019;yes;yes;42;female;2;1;0;0;0;0;0;0;0;0;0;18;PhD;2006;not_applicable;no
+16;L16HO;yes;old;D;12.12.2019;yes;yes;42;male;4;1;0;0;1;0;0;0;0;1;0;12;PhD;2001;Germany, 1 year, 1994;no
+17;L17HY;yes;young;D;13.12.2019;yes;yes;24;male;3;1;1;0;0;0;0;0;0;0;0;15;BA_student;2014;not_appplicable;no
+18;L18NY;no;young;A;15.12.2019;yes;yes;22;female;3;1;0;0;1;0;0;0;0;0;0;15;MA_student;not_applicable;not_appplicable;no
+19;L19NY;no;young;A;15.12.2019;yes;yes;19;female;3;1;0;0;0;0;0;0;0;1;0;13;BA_student;not_applicable;not_appplicable;no
+20;L20NY;no;young;A;15.12.2019;yes;yes;19;male;2;1;0;0;0;0;0;0;0;0;0;13;BA_student;not_applicable;not_appplicable;no
+21;L21NY;no;young;A;15.12.2019;yes;yes;22;female;3;1;1;0;0;0;0;0;0;0;0;15;BA_degree;not_applicable;not_appplicable;no
+22;L22HO;yes;old;S;16.12.2019;yes;yes;64;female;4;1;1;0;0;0;0;0;1;0;0;22;PhD;1980;not_appplicable;no
+23;L23HO;yes;old;S;17.12.2019;yes;yes;69;male;3;1;1;0;0;0;0;0;0;0;0;16;MSc;2009;Canada, 1982;no
+24;L24HY;yes;young;S;17.12.2019;yes;yes;22;female;3;1;1;0;0;0;0;0;0;0;0;15;BA_student;1997;not_appplicable;no
+25;L25HO;yes;old;S;17.12.2019;yes;yes;46;female;4;1;1;0;0;0;0;0;0;0;1;17;PhD;1996;not_appplicable;no
+26;L26NY;no;young;A;17.12.2019;yes;yes;22;female;3;1;1;0;0;0;0;0;0;0;0;15.5;MA_student;not_applicable;Moldova(1997), Russia (2001);no
+27;L27NY;no;young;A;16.12.2019;yes;yes;22;female;2;1;0;0;0;0;0;0;0;0;0;16.5;MA_student;not_applicable;from Uzbekistan to Russia (2015);no
+28;L28NY;no;young;A;18.12.2019;yes;yes;19;female;3;1;0;0;0;0;0;0;0;1;0;13;BA_student;not_applicable;not_appplicable;no
+29;L29NY;no;young;A;19.12.2019;yes;yes;20;female;2;1;0;0;0;0;0;0;0;0;0;13;high_school;not_applicable;not_appplicable;no
+30;L30HO;yes;old;S;20.12.2019;yes;yes;45;male;3;1;0;1;0;0;0;0;0;0;0;25;MScc;1994;not_appplicable;no
+31;L31HY;yes;young;S;20.12.2019;yes;yes;27;male;3;1;0;0;0;0;0;0;0;1;0;13;BA_student;2012;not_appplicable;no
+32;L32NO;no;old;O;27.12.2019;yes;yes;42;male;2;1;0;0;0;0;0;0;0;0;0;15.5;speciality;not_applicable;not_applicable;no
+33;L33NO;no;old;O;27.12.2019;yes;yes;50;female;1;0;0;0;0;0;0;0;0;0;0;16;speciality;not_applicable;not_applicable;no
+34;L34NO;no;old;O;27.12.2019;yes;yes;51;female;1;0;0;0;0;0;0;0;0;0;0;12;high_school;not_applicable;not_applicable;no
+35;L35NO;no;old;O;03.01.2020;yes;yes;43;female;1;0;0;0;0;0;0;0;0;0;0;17;speciality;not_applicable;not_applicable;no
+36;L36NO;no;old;O;12.01.2020;yes;yes;74;female;3;1;0;0;0;0;0;0;0;1;0;19;speciality;not_applicable;Germany, 2 years (1946-1948), Tanzania, 3 years (1977-1980);no
+37;L37NO;no;old;O;14.01.2020;yes;yes;46;female;2;1;0;0;0;0;0;0;0;0;0;15;speciality;not_applicable;not_applicable;no
+38;L38NY;no;young;A;10.12.2019;yes;yes;23;female;3;1;0;0;0;0;1;0;0;0;0;15;MA_student;not_aplicable;not_aplicable;no
+39;L39NY;no;young;N;25.01.2020;yes;yes;30;female;3;1;0;0;0;0;0;0;0;1;0;29;PhD;2015;not_applicable;no
+40;L40NY;no;young;N;25.01.2020;yes;yes;25;male;2;1;0;0;0;0;0;0;0;0;0;18.5;ma, phD candidate;2018;not_applicable;no
+41;L41NY;no;young;N;27.01.2020;yes;yes;31;female;2;1;0;0;0;0;0;0;0;0;0;16;ma;2016;not_applicable;no
+42;L42NY;no;young;N;27.01.2020;yes;yes;25;male;2;1;0;0;0;0;0;0;0;0;0;18.5;ma, phD candidate;2017;Gonkong, 1 year, communicated in english;no
+43;L43NY;no;young;N;27.01.2020;yes;yes;18;female;2;1;0;0;0;0;0;0;0;0;0;11.5;school;2019;;no
+44;L44HY;yes;young;N;27.01.2021;yes;yes;20;male;2;1;1;0;0;0;0;0;0;0;0;13.5;school;1999;;no
